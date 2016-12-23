@@ -156,7 +156,23 @@ describe "Language C# package", ->
       expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
       expect(tokens[3][1]).toEqual value: 'doFoo', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs', 'meta.method.cs']
 
-    it "tokenizes double method annotations", ->
+    it "tokenizes complex annotations", ->
+      tokens = grammar.tokenizeLines """
+        [Attrib1, Attrib2(posVar, "pos-lit", named1=val1, named2 = val2, named3="val3", named4 = "val.4")]
+        class TestClass {}
+      """
+
+      expect(tokens[0][6]).toEqual value: 'posVar', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][7]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.separator.parameter.cs']
+      expect(tokens[0][10]).toEqual value: 'pos-lit', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][14]).toEqual value: 'named1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[0][15]).toEqual value: '=', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'keyword.operator.assignment.cs']
+      expect(tokens[0][16]).toEqual value: 'val1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][23]).toEqual value: 'val2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][29]).toEqual value: 'val3', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][33]).toEqual value: 'named4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[0][38]).toEqual value: 'val.4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+
       tokens = grammar.tokenizeLines """
         class a
         {
@@ -174,6 +190,29 @@ describe "Language C# package", ->
       expect(tokens[2][5]).toEqual value: 'attrib2', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
       expect(tokens[2][6]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
 
+    it "tokenizes nested annotations", ->
+      tokens = grammar.tokenizeLines """
+        [parentClassAttrib]
+        class ParentClass
+        {
+            [childClassAttrib]
+            class childAttrib
+            {
+                [childClassPropAttrib]
+                bool hasData { get; set; }
+            }
+
+            [methodAttrib]
+            void addItem(string item)
+            {}
+        }
+      """
+
+      expect(tokens[0][1]).toEqual value: 'parentClassAttrib', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[3][2]).toEqual value: 'childClassAttrib', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[6][2]).toEqual value: 'childClassPropAttrib', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[10][2]).toEqual value: 'methodAttrib', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+
     it "correctly tokenizes class properties", ->
       tokens = grammar.tokenizeLines """
         class a
@@ -184,7 +223,7 @@ describe "Language C# package", ->
 
       expect(tokens[2][1]).toEqual value: 'bool', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
       expect(tokens[2][3]).toEqual value: 'hasData', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
-      expect(tokens[2][7]).toEqual value: 'get', scopes: [ 'source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs' ]
+      expect(tokens[2][7]).toEqual value: 'get', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
 
       tokens = grammar.tokenizeLines """
         class TestClass
@@ -205,7 +244,7 @@ describe "Language C# package", ->
 
       expect(tokens[2][1]).toEqual value: 'bool', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
       expect(tokens[2][3]).toEqual value: 'hasData', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
-      expect(tokens[4][1]).toEqual value: 'get', scopes: [ 'source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs' ]
+      expect(tokens[4][1]).toEqual value: 'get', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
 
     describe "Preprocessor directives", ->
       directives = [ '#if DEBUG', '#else', '#elif RELEASE', '#endif',
