@@ -549,6 +549,79 @@ repository:
       {
         include: "#comments"
       }
+      {
+        include: "#attribute"
+      }
+    ]
+  attribute:
+    patterns: [
+      {
+        match: ','
+        name: 'punctuation.definition.separator.parameter.cs'
+      }
+      {
+        comment: "attribute with parameters"
+        begin: "([\\w$]+)\\s*(?=\\()"
+        beginCaptures:
+          "1":
+            name: "entity.name.attribute.cs"
+        end: "\\)"
+        endCaptures:
+          "0":
+            name: "punctuation.definition.attribute.parameters.end.cs"
+        name: "meta.attribute.cs"
+        patterns: [
+            begin: "\\("
+            beginCaptures:
+              "0":
+                name: "punctuation.definition.attribute.parameters.begin.cs"
+            end: "(?=\\))"
+            name: "meta.attribute.parameters.body.cs"
+            patterns: [
+              {
+                comment: "named parameters (key)"
+                begin: "([\\w$]+)\\s*(=)\\s*"
+                beginCaptures:
+                  "1":
+                    name: "entity.key.parameter.attribute.cs"
+                  "2":
+                    name: "keyword.operator.assignment.cs"
+                end: "(?:(,)|(?=[\\)]))"
+                endCaptures:
+                  "1":
+                    name: "punctuation.definition.separator.parameter.cs"
+                patterns: [
+                  {
+                    comment: "named parameters (value)"
+                    match: "[^\",\\s\\)]+"
+                    captures:
+                      "0":
+                        name: "entity.value.parameter.attribute.cs"
+                  }
+                ]
+              }
+              {
+                comment: "positional parameters (value)"
+                begin: "\"?([^\",\\s\\)]+)"
+                beginCaptures:
+                  "1":
+                    name: "entity.value.parameter.attribute.cs"
+                end: "(?:(,)|(?=[\\)]))"
+                endCaptures:
+                  "1":
+                    name: "punctuation.definition.separator.parameter.cs"
+              }
+            ]
+          ]
+      }
+      {
+        comment: "attribute without parameters"
+        match: "[\\w$]+"
+        captures:
+          "0":
+            name: "entity.name.attribute.cs"
+        name: "meta.attribute.cs"
+      }
     ]
   "property-declaration":
     begin: "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+(\\w+)\\s*(?={|$)"
