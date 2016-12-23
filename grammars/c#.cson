@@ -528,7 +528,13 @@ repository:
     ]
   annotation:
     begin: "\\["
+    beginCaptures:
+      "0":
+        name: "punctuation.section.annotation.begin.cs"
     end: "\\]"
+    endCaptures:
+      "0":
+        name: "punctuation.section.annotation.end.cs"
     name: "meta.annotation.cs"
     patterns: [
       {
