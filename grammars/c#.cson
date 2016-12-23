@@ -529,7 +529,7 @@ repository:
   annotation:
     begin: "\\["
     end: "\\]"
-    name: "meta.method.annotation.cs"
+    name: "meta.annotation.cs"
     patterns: [
       {
         include: "#constants"
