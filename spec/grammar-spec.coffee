@@ -110,6 +110,54 @@ describe "Language C# package", ->
       expect(tokens[2][12]).toEqual value: 'string ', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs', 'storage.reference.type.cs']
       expect(tokens[2][13]).toEqual value: 'f', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs']
 
+    it "tokenizes class property annotations", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          [propAttrib]
+          bool hasData { get; set; }
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: '[', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[2][2]).toEqual value: 'propAttrib', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+      expect(tokens[3][1]).toEqual value: 'bool', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
+
+    it "tokenizes method annotations", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          [methodAttrib]
+          doFoo()
+          {
+          }
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: '[', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[2][2]).toEqual value: 'methodAttrib', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+      expect(tokens[3][1]).toEqual value: 'doFoo', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs', 'meta.method.cs']
+
+    it "tokenizes double method annotations", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          [attrib1][attrib2]
+          doFoo()
+          {
+          }
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: '[', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[2][2]).toEqual value: 'attrib1', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+      expect(tokens[2][4]).toEqual value: '[', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[2][5]).toEqual value: 'attrib2', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2][6]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+
     describe "Preprocessor directives", ->
       directives = [ '#if DEBUG', '#else', '#elif RELEASE', '#endif',
         '#define PCL', '#undef NET45',

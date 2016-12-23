@@ -624,34 +624,41 @@ repository:
       }
     ]
   "property-declaration":
-    begin: "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+(\\w+)\\s*(?={|$)"
-    end: "}|;|$"
-    beginCaptures:
-      "1":
-        patterns: [
-          {
-            include: "#storage-modifiers"
-          }
-        ]
-      "2":
-        patterns: [
-          {
-            include: "#type"
-          }
-        ]
-      "3":
-        name: "entity.name.function.cs"
-    name: "meta.property.cs"
     patterns: [
       {
-        include: "#block"
+        include: "#annotation"
       }
       {
-        begin: "="
-        end: "(?=;)"
+        begin: "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+(\\w+)\\s*(?={|$)"
+        end: "}|;|$"
+        beginCaptures:
+          "1":
+            patterns: [
+              {
+                include: "#storage-modifiers"
+              }
+            ]
+          "2":
+            patterns: [
+              {
+                include: "#type"
+              }
+            ]
+          "3":
+            name: "entity.name.function.cs"
+        name: "meta.property.cs"
         patterns: [
           {
-            include: "#code"
+            include: "#block"
+          }
+          {
+            begin: "="
+            end: "(?=;)"
+            patterns: [
+              {
+                include: "#code"
+              }
+            ]
           }
         ]
       }
