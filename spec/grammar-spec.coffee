@@ -110,6 +110,22 @@ describe "Language C# package", ->
       expect(tokens[2][11]).toEqual value: 'string ', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs', 'storage.reference.type.cs']
       expect(tokens[2][12]).toEqual value: 'f', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs']
 
+    it "tokenizes class annotations", ->
+      tokens = grammar.tokenizeLines """
+        [classAttrib]
+        class a
+        {
+          doFoo()
+          {
+          }
+        }
+      """
+
+      expect(tokens[0][0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[0][1]).toEqual value: 'classAttrib', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[0][2]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+      expect(tokens[1][0]).toEqual value: 'class', scopes: ['source.cs', 'meta.class.cs', 'meta.class.identifier.cs', 'storage.modifier.cs']
+
     it "tokenizes class property annotations", ->
       tokens = grammar.tokenizeLines """
         class a

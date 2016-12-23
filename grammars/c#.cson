@@ -218,63 +218,70 @@ repository:
       }
     ]
   "type-declaration":
-    begin: "(?=\\w?[\\w\\s]*[^@]?(?:class|struct|interface|enum)\\s+\\w+)"
-    end: "}"
-    endCaptures:
-      "0":
-        name: "punctuation.section.class.end.cs"
-    name: "meta.class.cs"
     patterns: [
       {
-        include: "#storage-modifiers"
+        include: "#annotation"
       }
       {
-        include: "#comments"
-      }
-      {
-        begin: "(class|struct|interface|enum)\\s+"
-        end: "(?={|:|$|where)"
-        name: "meta.class.identifier.cs"
-        beginCaptures:
-          "1":
-            name: "storage.modifier.cs"
-        patterns: [
-          {
-            include: "#type"
-          }
-        ]
-      }
-      {
-        begin: ":"
-        end: "(?={|where)"
-        patterns: [
-          {
-            include: "#type"
-          }
-          {
-            match: "([\\w<>]+)\\s*"
-            captures:
-              "1":
-                name: "storage.type.cs"
-          }
-        ]
-      }
-      {
-        include: "#generic-constraints"
-      }
-      {
-        begin: "{"
-        beginCaptures:
+        begin: "(?=\\w?[\\w\\s]*[^@]?(?:class|struct|interface|enum)\\s+\\w+)"
+        end: "}"
+        endCaptures:
           "0":
-            name: "punctuation.section.class.begin.cs"
-        end: "(?=})"
-        name: "meta.class.body.cs"
+            name: "punctuation.section.class.end.cs"
+        name: "meta.class.cs"
         patterns: [
           {
-            include: "#type-body"
+            include: "#storage-modifiers"
+          }
+          {
+            include: "#comments"
+          }
+          {
+            begin: "(class|struct|interface|enum)\\s+"
+            end: "(?={|:|$|where)"
+            name: "meta.class.identifier.cs"
+            beginCaptures:
+              "1":
+                name: "storage.modifier.cs"
+            patterns: [
+              {
+                include: "#type"
+              }
+            ]
+          }
+          {
+            begin: ":"
+            end: "(?={|where)"
+            patterns: [
+              {
+                include: "#type"
+              }
+              {
+                match: "([\\w<>]+)\\s*"
+                captures:
+                  "1":
+                    name: "storage.type.cs"
+              }
+            ]
+          }
+          {
+            include: "#generic-constraints"
+          }
+          {
+            begin: "{"
+            beginCaptures:
+              "0":
+                name: "punctuation.section.class.begin.cs"
+            end: "(?=})"
+            name: "meta.class.body.cs"
+            patterns: [
+              {
+                include: "#type-body"
+              }
+            ]
           }
         ]
-      }
+          }
     ]
   "type-body":
     patterns: [
