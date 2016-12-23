@@ -174,6 +174,39 @@ describe "Language C# package", ->
       expect(tokens[2][5]).toEqual value: 'attrib2', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
       expect(tokens[2][6]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
 
+    it "correctly tokenizes class properties", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          bool hasData { get; set; }
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'bool', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
+      expect(tokens[2][3]).toEqual value: 'hasData', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
+      expect(tokens[2][7]).toEqual value: 'get', scopes: [ 'source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs' ]
+
+      tokens = grammar.tokenizeLines """
+        class TestClass
+        {
+            bool hasData
+            {
+                get
+                {
+                    return hasData;
+                }
+                set
+                {
+                    hasData = value;
+                }
+            }
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'bool', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
+      expect(tokens[2][3]).toEqual value: 'hasData', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
+      expect(tokens[4][1]).toEqual value: 'get', scopes: [ 'source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs' ]
+
     describe "Preprocessor directives", ->
       directives = [ '#if DEBUG', '#else', '#elif RELEASE', '#endif',
         '#define PCL', '#undef NET45',
