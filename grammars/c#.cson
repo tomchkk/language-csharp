@@ -526,7 +526,7 @@ repository:
         name: "keyword.other.cs"
       }
     ]
-  attribute:
+  annotation:
     begin: "\\["
     end: "\\]"
     name: "meta.method.annotation.cs"
@@ -580,7 +580,7 @@ repository:
   method:
     patterns: [
       {
-        include: "#attribute"
+        include: "#annotation"
       }
       {
         begin: "(?=\\bnew\\s+)(?=[\\w<].*\\s+)(?=[^=]+\\()"
