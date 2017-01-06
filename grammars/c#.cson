@@ -90,6 +90,9 @@ repository:
   "field-declaration":
     patterns: [
       {
+        include: "#annotation"
+      }
+      {
         begin: "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))"
         end: "(?=;)"
         patterns: [
@@ -110,6 +113,7 @@ repository:
                 ]
               "3":
                 name: "entity.name.variable.cs"
+            name: "meta.field.cs"
           }
           {
             begin: "(?==>?)"
