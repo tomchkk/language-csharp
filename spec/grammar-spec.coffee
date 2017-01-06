@@ -22,7 +22,7 @@ describe "Language C# package", ->
       }
       """
 
-      expect(tokens[1][1]).toEqual value: 'byte', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'storage.type.cs']
+      expect(tokens[1][1]).toEqual value: 'byte', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
       expect(tokens[1][5]).toEqual value: '//', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.line.double-slash.cs']
       expect(tokens[1][6]).toEqual value: '(', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.line.double-slash.cs']
 
@@ -31,7 +31,7 @@ describe "Language C# package", ->
         byte q; /*(*/
       }
       """
-      expect(tokens[1][1]).toEqual value: 'byte', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'storage.type.cs']
+      expect(tokens[1][1]).toEqual value: 'byte', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
       expect(tokens[1][5]).toEqual value: '/*', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs', 'punctuation.definition.comment.cs']
       expect(tokens[1][6]).toEqual value: '(', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs']
 
@@ -245,6 +245,31 @@ describe "Language C# package", ->
       expect(tokens[2][1]).toEqual value: 'bool', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
       expect(tokens[2][3]).toEqual value: 'hasData', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
       expect(tokens[4][1]).toEqual value: 'get', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
+
+    it "correctly tokenizes class fields", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          public string TestField;
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'string', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
+      expect(tokens[2][5]).toEqual value: 'TestField', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'entity.name.variable.cs']
+
+    it "correctly tokenizes class field annotations", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          [FieldAttrib]
+          private string TestField;
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: '[', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[2][2]).toEqual value: 'FieldAttrib', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs' ]
+      expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
 
     describe "Preprocessor directives", ->
       directives = [ '#if DEBUG', '#else', '#elif RELEASE', '#endif',
