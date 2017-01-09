@@ -1,9 +1,9 @@
 {
   "name": "language-csharp",
-  "version": "0.13.0",
+  "version": "0.13.13",
   "private": true,
-  "description": "C# language support for Atom",
-  "repository": "https://github.com/atom/language-csharp",
+  "description": "A fork of the C# language support in Atom",
+  "repository": "https://github.com/tomchkk/language-csharp",
   "keywords": [
     "C#",
     "csharp",
