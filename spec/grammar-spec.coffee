@@ -271,6 +271,40 @@ describe "Language C# package", ->
       expect(tokens[2][2]).toEqual value: 'FieldAttrib', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs' ]
       expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
 
+    it "correctly tokenizes class field nullable types", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          public DateTime? TestDate;
+          private int? TestInt;
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'DateTime', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
+      expect(tokens[2][4]).toEqual value: '?', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'punctuation.storage.type.modifier.cs']
+      expect(tokens[2][6]).toEqual value: 'TestDate', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'entity.name.variable.cs']
+      expect(tokens[3][1]).toEqual value: 'private', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.modifier.cs']
+      expect(tokens[3][3]).toEqual value: 'int', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
+      expect(tokens[3][4]).toEqual value: '?', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'punctuation.storage.type.modifier.cs']
+      expect(tokens[3][6]).toEqual value: 'TestInt', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'entity.name.variable.cs']
+
+    it "correctly tokenizes class property nullable types", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          public DateTime? TestDate {};
+          private int? TestInt {};
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'DateTime', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
+      expect(tokens[2][4]).toEqual value: '?', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'punctuation.storage.type.modifier.cs']
+      expect(tokens[3][1]).toEqual value: 'private', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.modifier.cs']
+      expect(tokens[3][3]).toEqual value: 'int', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
+      expect(tokens[3][4]).toEqual value: '?', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'punctuation.storage.type.modifier.cs']
+
     describe "Preprocessor directives", ->
       directives = [ '#if DEBUG', '#else', '#elif RELEASE', '#endif',
         '#define PCL', '#undef NET45',

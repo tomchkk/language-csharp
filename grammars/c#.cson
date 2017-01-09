@@ -88,7 +88,7 @@ repository:
       }
     ]
   "field-declaration":
-    begin: "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event)\\s*)*)(?:[\\w\\s,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))"
+    begin: "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event|extern)\\s*)*)(?:[\\w\\s?*,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))"
     end: "(?=;)"
     patterns: [
       {
@@ -181,11 +181,13 @@ repository:
             name: "storage.type.cs"
       }
       {
-        match: "\\b([a-zA-Z]+[\\w\\.]*\\b(?:\\s*\\[\\s*\\])?\\*?)"
+        match: "\\b([a-zA-Z]+[\\w\\.]*\\b(?:\\s*\\[\\s*\\])?)(\\?|\\*?)"
         comment: "non-generic type"
         captures:
           "1":
             name: "storage.type.cs"
+          "2":
+            name: "punctuation.storage.type.modifier.cs"
       }
     ]
   "generic-constraints":
