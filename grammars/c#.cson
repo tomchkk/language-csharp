@@ -256,6 +256,9 @@ repository:
               "1":
                 name: "storage.type.cs"
           }
+          {
+            include: "#comments"
+          }
         ]
       }
       {

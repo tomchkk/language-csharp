@@ -110,6 +110,24 @@ describe "Language C# package", ->
       expect(tokens[2][11]).toEqual value: 'string ', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs', 'storage.reference.type.cs']
       expect(tokens[2][12]).toEqual value: 'f', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs']
 
+    it "tokenizes base class identifiers", ->
+      tokens = grammar.tokenizeLines """
+        class a : parent1, parent2 {}
+      """
+
+      expect(tokens[0][6]).toEqual value: 'parent1', scopes: ['source.cs', 'meta.class.cs', 'storage.type.cs']
+      expect(tokens[0][8]).toEqual value: 'parent2', scopes: ['source.cs', 'meta.class.cs', 'storage.type.cs']
+
+    it "tokenizes comments on class declaration lines", ->
+      tokens = grammar.tokenizeLines """
+        class a : parent1/*, parent2 */{}
+      """
+
+      expect(tokens[0][6]).toEqual value: 'parent1', scopes: ['source.cs', 'meta.class.cs', 'storage.type.cs']
+      expect(tokens[0][7]).toEqual value: '/*', scopes: ['source.cs', 'meta.class.cs', 'comment.block.cs', 'punctuation.definition.comment.cs']
+      expect(tokens[0][8]).toEqual value: ', parent2 ', scopes: ['source.cs', 'meta.class.cs', 'comment.block.cs']
+      expect(tokens[0][9]).toEqual value: '*/', scopes: ['source.cs', 'meta.class.cs', 'comment.block.cs', 'punctuation.definition.comment.cs']
+
     it "tokenizes class annotations", ->
       tokens = grammar.tokenizeLines """
         [classAttrib]
