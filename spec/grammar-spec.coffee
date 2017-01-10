@@ -256,7 +256,7 @@ describe "Language C# package", ->
       expect(tokens[2][3]).toEqual value: 'hasData', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
       expect(tokens[4][1]).toEqual value: 'get', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
 
-    it "correctly tokenizes interface private property implementations", ->
+    it "correctly tokenizes interface private property name implementations", ->
       tokens = grammar.tokenizeLines """
         class a
         {
