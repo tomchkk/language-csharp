@@ -573,6 +573,7 @@ repository:
             name: "punctuation.definition.attribute.parameters.end.cs"
         name: "meta.attribute.cs"
         patterns: [
+            comments: "parameters"
             begin: "\\("
             beginCaptures:
               "0":
@@ -601,6 +602,17 @@ repository:
                         name: "entity.value.parameter.attribute.cs"
                   }
                 ]
+              }
+              {
+                comment: "positional parameter expressions"
+                begin: "([\\w]+\\s*\\(\\s*[\\w]+\\s*\\))"
+                beginCaptures:
+                  "1":
+                    name: "entity.value.parameter.attribute.cs"
+                end: "(?:(,)|(?=[\\)]))"
+                endCaptures:
+                  "1":
+                    name: "punctuation.definition.separator.parameter.cs"
               }
               {
                 comment: "positional parameters (value)"
