@@ -638,7 +638,7 @@ repository:
       }
     ]
   "property-declaration":
-    begin: "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+(\\w+)\\s*(?={|$)"
+    begin: "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+((?:\\w+<[^>]+>.)?\\w+)\\s*(?={|$)"
     end: "}|;|$"
     beginCaptures:
       "1":

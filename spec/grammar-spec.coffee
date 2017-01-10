@@ -256,6 +256,18 @@ describe "Language C# package", ->
       expect(tokens[2][3]).toEqual value: 'hasData', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
       expect(tokens[4][1]).toEqual value: 'get', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
 
+    it "correctly tokenizes interface private property implementations", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          PropType[] Test<arg1, arg2>.Prop { get; set; }
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'PropType[]', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs' ]
+      expect(tokens[2][3]).toEqual value: 'Test<arg1, arg2>.Prop', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
+      expect(tokens[2][7]).toEqual value: 'get', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
+
     it "correctly tokenizes class fields", ->
       tokens = grammar.tokenizeLines """
         class a
