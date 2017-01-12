@@ -174,6 +174,18 @@ describe "Language C# package", ->
       expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
       expect(tokens[3][1]).toEqual value: 'doFoo', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs', 'meta.method.cs']
 
+    it "tokenizes method parameters", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          void func(CustomType customType = CustomType.Prop) {}
+        }
+      """
+
+      expect(tokens[2][5]).toEqual value: 'CustomType', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'storage.type.generic.cs']
+      expect(tokens[2][7]).toEqual value: 'customType', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'variable.parameter.function.cs']
+      expect(tokens[2][11]).toEqual value: 'CustomType.Prop', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'storage.type.cs']
+
     it "tokenizes annotations with parameter expressions", ->
       tokens = grammar.tokenizeLines """
         [Date(typeof(DateType))]

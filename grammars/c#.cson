@@ -826,6 +826,9 @@ repository:
       {
         include: "#builtinTypes"
       }
+      {
+        include: "#type"
+      }
     ]
   preprocessor:
     patterns: [
