@@ -608,7 +608,7 @@ repository:
               }
               {
                 comment: "positional parameter expressions"
-                begin: "([\\w]+\\s*\\(\\s*[\\w]+\\s*\\))"
+                begin: "([\\w]+\\s*\\(\\s*[\\w<>]+\\s*\\))"
                 beginCaptures:
                   "1":
                     name: "entity.value.parameter.attribute.cs"
