@@ -110,9 +110,8 @@ repository:
             name: "entity.name.variable.cs"
         name: "meta.field.cs"
       }
-      # this is causing problems
       {
-        begin: "\\s*=\\s*([\\w.]+)(?=;)"
+        match: "\\s*=\\s*([\\w.]+)(?=;)"
         captures:
           "1":
             name: "meta.field.cs"

@@ -382,10 +382,13 @@ describe "Language C# package", ->
         }
       """
 
+      expect(tokens[0][0]).toEqual value: 'class', scopes: ['source.cs', 'meta.class.cs', 'meta.class.identifier.cs', 'storage.modifier.cs']
+      expect(tokens[1][0]).toEqual value: '{', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'punctuation.section.class.begin.cs']
       expect(tokens[2][1]).toEqual value: 'private', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.modifier.cs']
       expect(tokens[2][3]).toEqual value: 'Class.Type', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
       expect(tokens[2][5]).toEqual value: '_name', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'entity.name.variable.cs']
       expect(tokens[2][8]).toEqual value: 'Class.Type.Method', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs']
+      expect(tokens[3][0]).toEqual value: '}', scopes: ['source.cs', 'meta.class.cs', 'punctuation.section.class.end.cs']
 
     it "correctly tokenizes class field annotations", ->
       tokens = grammar.tokenizeLines """
