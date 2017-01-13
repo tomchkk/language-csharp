@@ -205,6 +205,22 @@ describe "Language C# package", ->
       expect(tokens[2][7]).toEqual value: 'customType', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'variable.parameter.function.cs']
       expect(tokens[2][11]).toEqual value: 'CustomType.Prop', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'storage.type.cs']
 
+    it "tokenizes method base calls with multiple parameters", ->
+      tokens = grammar.tokenizeLines """
+        class a
+          {
+              public CouchDocument(IDictionary<string, JToken> doc)
+                  : this(doc["_id"].Value<string>(), doc["_rev"].Value<string>())
+              {
+              }
+          }
+      """
+
+      expect(tokens[2][3]).toEqual value: 'CouchDocument', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'entity.name.function.cs']
+      expect(tokens[3][2]).toEqual value: 'this', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.base-call.cs', 'constant.language.cs']
+      expect(tokens[3][7]).toEqual value: ',', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.base-call.cs', 'punctuation.definition.separator.parameter.cs']
+      expect(tokens[3][11]).toEqual value: ')', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.base-call.cs']
+
     it "tokenizes annotations with parameter expressions", ->
       tokens = grammar.tokenizeLines """
         [Date(typeof(DateType))]

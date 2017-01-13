@@ -757,9 +757,13 @@ repository:
             beginCaptures:
               "1":
                 name: "constant.language.cs"
-            end: "\\)"
+            end: "\\)$"
             name: "meta.method.base-call.cs"
             patterns: [
+              {
+                match: ","
+                name: "punctuation.definition.separator.parameter.cs"
+              }
               {
                 include: "#builtinTypes"
               }
