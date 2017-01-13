@@ -174,6 +174,24 @@ describe "Language C# package", ->
       expect(tokens[2][3]).toEqual value: ']', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
       expect(tokens[3][1]).toEqual value: 'doFoo', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method-call.cs', 'meta.method.cs']
 
+    it "tokenizes complex method definitions", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          public static t JsonDeserialize<t>(string json) where t : CouchDocument
+          {
+          }
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'static', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'storage.modifier.cs']
+      expect(tokens[2][5]).toEqual value: 't', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.return-type.cs']
+      expect(tokens[2][7]).toEqual value: 'JsonDeserialize<t>', scopes: [ 'source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'entity.name.function.cs']
+      expect(tokens[2][14]).toEqual value: 'where', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.constraint.cs', 'keyword.other.cs']
+      expect(tokens[2][16]).toEqual value: 't', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.constraint.cs', 'storage.type.cs']
+      expect(tokens[2][19]).toEqual value: 'CouchDocument', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.constraint.cs', 'storage.type.cs']
+
     it "tokenizes method parameters", ->
       tokens = grammar.tokenizeLines """
         class a
@@ -182,6 +200,7 @@ describe "Language C# package", ->
         }
       """
 
+      expect(tokens[2][3]).toEqual value: 'func', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'entity.name.function.cs']
       expect(tokens[2][5]).toEqual value: 'CustomType', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'storage.type.generic.cs']
       expect(tokens[2][7]).toEqual value: 'customType', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'variable.parameter.function.cs']
       expect(tokens[2][11]).toEqual value: 'CustomType.Prop', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'storage.type.cs']

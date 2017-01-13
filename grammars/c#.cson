@@ -641,7 +641,7 @@ repository:
       }
     ]
   "property-declaration":
-    begin: "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.+?)\\s+((?:\\w+<[^>]+>.)?\\w+)\\s*(?={|$)"
+    begin: "^\\s*(?!.*\\b(?:class|interface|struct)\\b)((?:\\w+\\s+)*?)(?!(?:private|public|internal|protected|static|new|virtual|override))(\\w.[^\\)]+?)\\s+((?:\\w+<[^>]+>.)?\\w+)\\s*(?={|$)"
     end: "}|;|$"
     beginCaptures:
       "1":
@@ -700,6 +700,12 @@ repository:
             include: "#builtinTypes"
           }
           {
+            match: "(\\w.*)(?=\\s+[\\w.]+\\s*.+\\()"
+            captures:
+              "1":
+                name: "meta.method.return-type.cs"
+          }
+          {
             begin: "([\\w]+\\s*(?:<[\\w<>\\s,`?]*>)?)\\s*\\("
             beginCaptures:
               "1":
@@ -720,6 +726,17 @@ repository:
                 include: "#builtinTypes"
               }
             ]
+          }
+          {
+            match: "\\s*(where\\s+[\\w.]+\\s*:\\s*[\\w.]+)"
+            captures:
+              "1":
+                name: "meta.method.constraint.cs"
+                patterns: [
+                  {
+                    include: "#generic-constraints"
+                  }
+                ]
           }
           {
             begin: "(?=\\w.*\\s+[\\w.]+\\s*\\()"
