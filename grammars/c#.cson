@@ -88,7 +88,7 @@ repository:
       }
     ]
   "field-declaration":
-    begin: "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event|extern)\\s*)*)(?:[\\w\\s?*,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))"
+    begin: "(?=(?:(?:(?:private|public|volatile|internal|protected|static|readonly|const|event|extern)\\s*)*)(?:[\\w\\s?*.,<>\\[\\]]+?)(?:[\\w]+)\\s*(?:;|=|=>))"
     end: "(?=;)"
     patterns: [
       {
@@ -109,6 +109,18 @@ repository:
           "3":
             name: "entity.name.variable.cs"
         name: "meta.field.cs"
+      }
+      # this is causing problems
+      {
+        begin: "\\s*=\\s*([\\w.]+)(?=;)"
+        captures:
+          "1":
+            name: "meta.field.cs"
+            patterns: [
+              {
+                include: "#code"
+              }
+            ]
       }
       {
         begin: "(?==>?)"

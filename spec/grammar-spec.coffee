@@ -362,6 +362,31 @@ describe "Language C# package", ->
       expect(tokens[2][3]).toEqual value: 'string', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
       expect(tokens[2][5]).toEqual value: 'TestField', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'entity.name.variable.cs']
 
+    it "correctly tokenizes class fields with values", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          public double num1 = 1.456;
+        }
+      """
+      expect(tokens[2][1]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'double', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
+      expect(tokens[2][5]).toEqual value: 'num1', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'entity.name.variable.cs']
+      expect(tokens[2][8]).toEqual value: '1.456', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'constant.numeric.cs']
+
+    it "correctly tokenizes class fields with custom types", ->
+      tokens = grammar.tokenizeLines """
+        class a
+        {
+          private Class.Type _name = Class.Type.Method;
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'private', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'Class.Type', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'storage.type.cs']
+      expect(tokens[2][5]).toEqual value: '_name', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs', 'entity.name.variable.cs']
+      expect(tokens[2][8]).toEqual value: 'Class.Type.Method', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.field.cs']
+
     it "correctly tokenizes class field annotations", ->
       tokens = grammar.tokenizeLines """
         class a
