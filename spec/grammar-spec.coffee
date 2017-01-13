@@ -241,6 +241,13 @@ describe "Language C# package", ->
       expect(tokens[0][3]).toEqual value: 'typeof(List<string>)', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
       expect(tokens[0][4]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
 
+    it "tokenizes annotations with parameter expressions with Dictionary types", ->
+      {tokens} = grammar.tokenizeLine "[ConcreteType(typeof(Dictionary<string, List<FooType>))]"
+
+      expect(tokens[1]).toEqual value: 'ConcreteType', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[3]).toEqual value: 'typeof(Dictionary<string, List<FooType>)', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+
     it "tokenizes complex annotations", ->
       tokens = grammar.tokenizeLines """
         [Attrib1, Attrib2(posVar, "pos-lit", named1=val1, named2 = val2, named3="val3", named4 = "val.4")]
