@@ -208,12 +208,12 @@ describe "Language C# package", ->
     it "tokenizes method base calls with multiple parameters", ->
       tokens = grammar.tokenizeLines """
         class a
-          {
-              public CouchDocument(IDictionary<string, JToken> doc)
-                  : this(doc["_id"].Value<string>(), doc["_rev"].Value<string>())
-              {
-              }
-          }
+        {
+            public CouchDocument(IDictionary<string, JToken> doc)
+                : this(doc["_id"].Value<string>(), doc["_rev"].Value<string>())
+            {
+            }
+        }
       """
 
       expect(tokens[2][3]).toEqual value: 'CouchDocument', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'entity.name.function.cs']
