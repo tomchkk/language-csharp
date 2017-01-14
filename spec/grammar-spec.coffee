@@ -221,6 +221,25 @@ describe "Language C# package", ->
       expect(tokens[3][7]).toEqual value: ',', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.base-call.cs', 'punctuation.definition.separator.parameter.cs']
       expect(tokens[3][11]).toEqual value: ')', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.base-call.cs']
 
+    it "tokenizes abstract functions", ->
+      tokens = grammar.tokenizeLines """
+        public abstract class a
+        {
+          public abstract void JobComplete();
+        }
+      """
+
+      expect(tokens[0][0]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'storage.modifier.cs']
+      expect(tokens[1][0]).toEqual value: '{', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'punctuation.section.class.begin.cs']
+      expect(tokens[2][1]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'abstract', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'storage.modifier.cs']
+      expect(tokens[2][5]).toEqual value: 'void', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.return-type.cs']
+      expect(tokens[2][7]).toEqual value: 'JobComplete', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs', 'entity.name.function.cs']
+      expect(tokens[2][8]).toEqual value: '(', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs']
+      expect(tokens[2][9]).toEqual value: ')', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'meta.method.identifier.cs']
+      expect(tokens[2][10]).toEqual value: ';', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.method.cs', 'punctuation.section.method.end.cs']
+      expect(tokens[3][0]).toEqual value: '}', scopes: ['source.cs', 'meta.class.cs', 'punctuation.section.class.end.cs']
+
     it "tokenizes annotations with parameter expressions", ->
       tokens = grammar.tokenizeLines """
         [Date(typeof(DateType))]

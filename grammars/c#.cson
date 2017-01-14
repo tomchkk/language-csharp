@@ -698,7 +698,8 @@ repository:
       }
       {
         begin: "(?<!=|=\\s)(?!new)(?!.*(=|\\/\\/|\\/\\*).*\\()(?=[\\w<].*\\s+.+\\()"
-        end: "(})|(?=;)"
+        # end: "(})|(?=;)"
+        end: "(}|;)"
         endCaptures:
           "1":
             name: "punctuation.section.method.end.cs"
