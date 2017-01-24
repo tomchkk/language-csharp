@@ -676,8 +676,23 @@ repository:
       }
       {
         begin: "="
+        beginCaptures:
+          "0":
+            name: "keyword.operator.assignment.cs"
         end: "(?=;)"
         patterns: [
+          {
+            begin: "([^{}]+?)(?={|$)"
+            end: "(?={|$)"
+            beginCaptures:
+              "0":
+                name: "entity.value.property.cs"
+                patterns: [
+                  {
+                    include: "#code"
+                  }
+                ]
+          }
           {
             include: "#code"
           }

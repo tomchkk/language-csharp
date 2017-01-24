@@ -339,6 +339,21 @@ describe "Language C# package", ->
       tokens = grammar.tokenizeLines """
         class TestClass
         {
+          public string testString { get; set; } = "testValue";
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'public', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.modifier.cs']
+      expect(tokens[2][3]).toEqual value: 'string', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'storage.type.cs']
+      expect(tokens[2][5]).toEqual value: 'testString', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.name.function.cs']
+      expect(tokens[2][9]).toEqual value: 'get', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
+      expect(tokens[2][11]).toEqual value: 'set', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'meta.block.cs', 'keyword.other.cs']
+      expect(tokens[2][15]).toEqual value: '=', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'keyword.operator.assignment.cs']
+      expect(tokens[2][18]).toEqual value: 'testValue', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'meta.property.cs', 'entity.value.property.cs', 'string.quoted.double.cs']
+
+      tokens = grammar.tokenizeLines """
+        class TestClass
+        {
             bool hasData
             {
                 get
