@@ -267,6 +267,14 @@ describe "Language C# package", ->
       expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
       expect(tokens[3]).toEqual value: 'typeof(Dictionary<string, List<FooType>>)', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
 
+    it "tokenizes annotations with positional parameter strings", ->
+      {tokens} = grammar.tokenizeLine "[Description(\"string\")]"
+
+      expect(tokens[1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[3]).toEqual value: '"string"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[4]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+
     it "tokenizes complex annotations", ->
       tokens = grammar.tokenizeLines """
         [Attrib1, Attrib2(posVar, "pos-lit", named1=val1, named2 = val2, named3="val3", named4 = "val.4")]
@@ -275,14 +283,14 @@ describe "Language C# package", ->
 
       expect(tokens[0][6]).toEqual value: 'posVar', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
       expect(tokens[0][7]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.separator.parameter.cs']
-      expect(tokens[0][10]).toEqual value: 'pos-lit', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][14]).toEqual value: 'named1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
-      expect(tokens[0][15]).toEqual value: '=', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'keyword.operator.assignment.cs']
-      expect(tokens[0][16]).toEqual value: 'val1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][23]).toEqual value: 'val2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][29]).toEqual value: 'val3', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][33]).toEqual value: 'named4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
-      expect(tokens[0][38]).toEqual value: 'val.4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][9]).toEqual value: '"pos-lit"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][12]).toEqual value: 'named1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[0][13]).toEqual value: '=', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'keyword.operator.assignment.cs']
+      expect(tokens[0][14]).toEqual value: 'val1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][21]).toEqual value: 'val2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][27]).toEqual value: 'val3', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][31]).toEqual value: 'named4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[0][36]).toEqual value: 'val.4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
 
       tokens = grammar.tokenizeLines """
         class a
