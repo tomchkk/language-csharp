@@ -35,6 +35,46 @@ describe "Language C# package", ->
       expect(tokens[1][5]).toEqual value: '/*', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs', 'punctuation.definition.comment.cs']
       expect(tokens[1][6]).toEqual value: '(', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs']
 
+    it "tokenizes plain enums correctly", ->
+      tokens = grammar.tokenizeLines """
+        private enum TestEnum
+        {
+          first,
+          second
+        }
+      """
+
+      expect(tokens[0][0]).toEqual value: 'private', scopes: ['source.cs', 'meta.enum.cs', 'storage.modifier.cs']
+      expect(tokens[0][2]).toEqual value: 'enum', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.declaration.cs', 'keyword.enum.cs']
+      expect(tokens[0][4]).toEqual value: 'TestEnum', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.declaration.cs', 'meta.enum.identifier.cs']
+      expect(tokens[1][0]).toEqual value: '{', scopes: ['source.cs', 'meta.enum.cs',  'meta.enum.body.cs', 'punctuation.section.enum.begin.cs']
+      expect(tokens[2][1]).toEqual value: 'first', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
+      expect(tokens[2][2]).toEqual value: ',', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'punctuation.definition.separator.enum.cs']
+      expect(tokens[3][1]).toEqual value: 'second', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
+      expect(tokens[4][0]).toEqual value: '}', scopes: [ 'source.cs', 'meta.enum.cs', 'punctuation.section.enum.end.cs']
+
+    it "tokenizes enums with assignment correctly", ->
+      tokens = grammar.tokenizeLines """
+        enum TestEnum : int
+        {
+          first = 0,
+          second = 1
+        }
+      """
+
+      expect(tokens[0][0]).toEqual value: 'enum', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.declaration.cs', 'keyword.enum.cs']
+      expect(tokens[0][2]).toEqual value: 'TestEnum', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.declaration.cs', 'meta.enum.identifier.cs']
+      expect(tokens[0][6]).toEqual value: 'int', scopes: ['source.cs', 'meta.enum.cs', 'storage.type.cs']
+      expect(tokens[1][0]).toEqual value: '{', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'punctuation.section.enum.begin.cs']
+      expect(tokens[2][1]).toEqual value: 'first', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
+      expect(tokens[2][3]).toEqual value: '= ', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs']
+      expect(tokens[2][4]).toEqual value: '0', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'constant.numeric.cs']
+      expect(tokens[2][5]).toEqual value: ',', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'punctuation.definition.separator.enum.cs']
+      expect(tokens[3][1]).toEqual value: 'second', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
+      expect(tokens[3][3]).toEqual value: '= ', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs']
+      expect(tokens[3][4]).toEqual value: '1', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'constant.numeric.cs']
+      expect(tokens[4][0]).toEqual value: '}', scopes: [ 'source.cs', 'meta.enum.cs', 'punctuation.section.enum.end.cs']
+
     it "tokenizes method definitions correctly", ->
       {tokens} = grammar.tokenizeLine("void func()")
 
@@ -70,7 +110,7 @@ describe "Language C# package", ->
       expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.method-call.cs', 'punctuation.definition.method-parameters.begin.cs']
 
       {tokens} = grammar.tokenizeLine("func ()")
-      
+
       expect(tokens[0]).toEqual value: 'func', scopes: ['source.cs', 'meta.method-call.cs', 'meta.method.cs']
       expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.method-call.cs', 'punctuation.definition.method-parameters.begin.cs']
 
