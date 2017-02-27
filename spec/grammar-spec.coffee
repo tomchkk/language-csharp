@@ -35,7 +35,7 @@ describe "Language C# package", ->
       expect(tokens[1][5]).toEqual value: '/*', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs', 'punctuation.definition.comment.cs']
       expect(tokens[1][6]).toEqual value: '(', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs']
 
-    it "tokenizes plain enums correctly", ->
+    it "tokenizes plain enums", ->
       tokens = grammar.tokenizeLines """
         private enum TestEnum
         {
@@ -53,7 +53,7 @@ describe "Language C# package", ->
       expect(tokens[3][1]).toEqual value: 'second', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
       expect(tokens[4][0]).toEqual value: '}', scopes: [ 'source.cs', 'meta.enum.cs', 'punctuation.section.enum.end.cs']
 
-    it "tokenizes enums with assignment correctly", ->
+    it "tokenizes enums with numeric assignment", ->
       tokens = grammar.tokenizeLines """
         enum TestEnum : int
         {
@@ -67,13 +67,27 @@ describe "Language C# package", ->
       expect(tokens[0][6]).toEqual value: 'int', scopes: ['source.cs', 'meta.enum.cs', 'storage.type.cs']
       expect(tokens[1][0]).toEqual value: '{', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'punctuation.section.enum.begin.cs']
       expect(tokens[2][1]).toEqual value: 'first', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
-      expect(tokens[2][3]).toEqual value: '= ', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs']
-      expect(tokens[2][4]).toEqual value: '0', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'constant.numeric.cs']
-      expect(tokens[2][5]).toEqual value: ',', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'punctuation.definition.separator.enum.cs']
+      expect(tokens[2][3]).toEqual value: '=', scopes: [ 'source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.value.enum.cs', 'keyword.operator.assignment.cs']
+      expect(tokens[2][5]).toEqual value: '0', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.value.enum.cs', 'constant.numeric.cs']
+      expect(tokens[2][6]).toEqual value: ',', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'punctuation.definition.separator.enum.cs']
       expect(tokens[3][1]).toEqual value: 'second', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
-      expect(tokens[3][3]).toEqual value: '= ', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs']
-      expect(tokens[3][4]).toEqual value: '1', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'constant.numeric.cs']
+      expect(tokens[3][3]).toEqual value: '=', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.value.enum.cs', 'keyword.operator.assignment.cs']
+      expect(tokens[3][5]).toEqual value: '1', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.value.enum.cs', 'constant.numeric.cs']
       expect(tokens[4][0]).toEqual value: '}', scopes: [ 'source.cs', 'meta.enum.cs', 'punctuation.section.enum.end.cs']
+
+    it "tokenizes enums with reference assignment", ->
+      tokens = grammar.tokenizeLines """
+        public enum TestEnum
+        {
+          IN = CLASS.IN,
+          CS = CLASS.CS
+        }
+      """
+
+      expect(tokens[2][1]).toEqual value: 'IN', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
+      expect(tokens[2][5]).toEqual value: 'CLASS.IN', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.value.enum.cs', 'storage.reference.cs']
+      expect(tokens[3][1]).toEqual value: 'CS', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.name.enum.cs']
+      expect(tokens[3][5]).toEqual value: 'CLASS.CS', scopes: ['source.cs', 'meta.enum.cs', 'meta.enum.body.cs', 'entity.value.enum.cs', 'storage.reference.cs']
 
     it "tokenizes method definitions correctly", ->
       {tokens} = grammar.tokenizeLine("void func()")

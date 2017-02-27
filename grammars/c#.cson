@@ -305,14 +305,22 @@ repository:
                 include: "#comments"
               }
               {
-                begin: "\\s*=\\s*"
+                begin: "\\s*(=)\\s*"
+                beginCaptures:
+                  "1":
+                    name: "keyword.operator.assignment.cs"
                 end: "(?=,|})"
+                name: "entity.value.enum.cs"
                 patterns: [
                   {
                     include: "#comments"
                   }
                   {
                     include: "#constants"
+                  }
+                  {
+                    match: "[\\w.]+"
+                    name: "storage.reference.cs"
                   }
                 ]
               }
