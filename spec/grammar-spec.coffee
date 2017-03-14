@@ -328,13 +328,116 @@ describe "Language C# package", ->
       expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
       expect(tokens[3]).toEqual value: 'typeof(Dictionary<string, List<FooType>>)', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
 
-    it "tokenizes annotations with positional parameter strings", ->
-      {tokens} = grammar.tokenizeLine "[Description(\"string\")]"
+    it "tokenizes annotations with an simple positional parameter string", ->
+      {tokens} = grammar.tokenizeLine "[Description(\"This is a description.\")]"
 
+      expect(tokens[0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
       expect(tokens[1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
       expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
-      expect(tokens[3]).toEqual value: '"string"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[4]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[4]).toEqual value: 'This is a description.', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[5]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[6]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[7]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+
+    it "tokenizes annotations with an extended positional parameter string", ->
+      {tokens} = grammar.tokenizeLine "[Description(\"This is a description, with a comma-separated value.\")]"
+
+      expect(tokens[0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[4]).toEqual value: 'This is a description, with a comma-separated value.', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[5]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[6]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[7]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+
+    it "tokenizes annotations with a multi-line positional parameter string", ->
+      tokens = grammar.tokenizeLines """
+        [Description(
+          "This is a description, with a comma-separated value."
+        )]
+      """
+
+      expect(tokens[0][0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[0][1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[0][2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[1][1]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[1][2]).toEqual value: 'This is a description, with a comma-separated value.', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[1][3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[2][0]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[2][1]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+
+    it "tokenizes annotations with a joined positional parameter string", ->
+      {tokens} = grammar.tokenizeLine "[Description(\"This is a description \" + \"that is joined.\")]"
+
+      expect(tokens[0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[4]).toEqual value: 'This is a description ', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[5]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[7]).toEqual value: '+', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'keyword.operator.concatenation.cs']
+      expect(tokens[9]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[10]).toEqual value: 'that is joined.', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[11]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[12]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[13]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+
+    it "tokenizes annotations with a end-joined multi-line positional parameter string", ->
+      tokens = grammar.tokenizeLines """
+        [Description(
+          "This is a description, it has a comma " +
+            " and is line-continued."
+        )]
+      """
+
+      expect(tokens[0][0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[0][1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[0][2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[1][1]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[1][2]).toEqual value: 'This is a description, it has a comma ', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[1][3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[1][5]).toEqual value: '+', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'keyword.operator.concatenation.cs']
+      expect(tokens[2][1]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[2][2]).toEqual value: ' and is line-continued.', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[2][3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[3][0]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[3][1]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+
+    it "tokenizes annotations with a start-joined multi-line positional parameter string", ->
+      tokens = grammar.tokenizeLines """
+        [Description(
+          "This is a description, it has a comma "
+            + " and is line-continued."
+        )]
+      """
+
+      expect(tokens[0][0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[0][1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[0][2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[1][1]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[1][2]).toEqual value: 'This is a description, it has a comma ', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[1][3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[2][1]).toEqual value: '+', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'keyword.operator.concatenation.cs']
+      expect(tokens[2][3]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[2][4]).toEqual value: ' and is line-continued.', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[2][5]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[3][0]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[3][1]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
+
+    it "tokenizes annotations with named parameter strings", ->
+      {tokens} = grammar.tokenizeLine "[Attrib1(namedParam = \"A parameter value, with a comma \" + \"and a join!\", namedParam2 = \"paramVal2\"), Attrib2]"
+
+      expect(tokens[3]).toEqual value: 'namedParam', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[8]).toEqual value: 'A parameter value, with a comma ', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[14]).toEqual value: 'and a join!', scopes: [ 'source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[16]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.separator.parameter.cs']
+      expect(tokens[18]).toEqual value: 'namedParam2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[23]).toEqual value: 'paramVal2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[26]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.definition.separator.parameter.cs']
+      expect(tokens[28]).toEqual value: 'Attrib2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+
 
     it "tokenizes complex annotations", ->
       tokens = grammar.tokenizeLines """
@@ -344,14 +447,18 @@ describe "Language C# package", ->
 
       expect(tokens[0][6]).toEqual value: 'posVar', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
       expect(tokens[0][7]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.separator.parameter.cs']
-      expect(tokens[0][9]).toEqual value: '"pos-lit"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][12]).toEqual value: 'named1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
-      expect(tokens[0][13]).toEqual value: '=', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'keyword.operator.assignment.cs']
-      expect(tokens[0][14]).toEqual value: 'val1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][21]).toEqual value: 'val2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][27]).toEqual value: 'val3', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
-      expect(tokens[0][31]).toEqual value: 'named4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
-      expect(tokens[0][36]).toEqual value: 'val.4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][10]).toEqual value: 'pos-lit', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[0][12]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.separator.parameter.cs']
+      expect(tokens[0][14]).toEqual value: 'named1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[0][15]).toEqual value: '=', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'keyword.operator.assignment.cs']
+      expect(tokens[0][16]).toEqual value: 'val1', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][23]).toEqual value: 'val2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs']
+      expect(tokens[0][28]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[0][29]).toEqual value: 'val3', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
+      expect(tokens[0][30]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[0][31]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.separator.parameter.cs' ]
+      expect(tokens[0][33]).toEqual value: 'named4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.key.parameter.attribute.cs']
+      expect(tokens[0][38]).toEqual value: 'val.4', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.cs']
 
       tokens = grammar.tokenizeLines """
         class a

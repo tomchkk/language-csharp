@@ -695,60 +695,90 @@ repository:
             name: "punctuation.definition.attribute.parameters.end.cs"
         name: "meta.attribute.cs"
         patterns: [
-            comments: "parameters"
-            begin: "\\("
-            beginCaptures:
-              "0":
-                name: "punctuation.definition.attribute.parameters.begin.cs"
-            end: "(?=\\))"
-            name: "meta.attribute.parameters.body.cs"
-            patterns: [
-              {
-                comment: "named parameters (key)"
-                begin: "([\\w$]+)\\s*(=)\\s*"
-                beginCaptures:
-                  "1":
-                    name: "entity.key.parameter.attribute.cs"
-                  "2":
-                    name: "keyword.operator.assignment.cs"
-                end: "(?:(,)|(?=[\\)]))"
-                endCaptures:
-                  "1":
-                    name: "punctuation.definition.separator.parameter.cs"
-                patterns: [
-                  {
-                    comment: "named parameters (value)"
-                    match: "[^\",\\s\\)]+"
-                    captures:
-                      "0":
-                        name: "entity.value.parameter.attribute.cs"
-                  }
-                ]
-              }
-              {
-                comment: "positional parameter expressions"
-                begin: "[\\w]+\\s*\\(\\s*[\\w<>]+\\s*(?:,\\s*[\\w<>]+\\s*)?\\)"
-                beginCaptures:
-                  "0":
-                    name: "entity.value.parameter.attribute.cs"
-                end: "(?:(,)|(?=[\\)]))"
-                endCaptures:
-                  "1":
-                    name: "punctuation.definition.separator.parameter.cs"
-              }
-              {
-                comment: "positional parameters (value)"
-                begin: "(\"?(?:[^\",\\s)]\\s*)+\"?)"
-                beginCaptures:
-                  "1":
-                    name: "entity.value.parameter.attribute.cs"
-                end: "(?:(,)|(?=[\\)]))"
-                endCaptures:
-                  "1":
-                    name: "punctuation.definition.separator.parameter.cs"
-              }
-            ]
+          comments: "parameters"
+          begin: "\\("
+          beginCaptures:
+            "0":
+              name: "punctuation.definition.attribute.parameters.begin.cs"
+          end: "(?=\\))"
+          name: "meta.attribute.parameters.body.cs"
+          patterns: [
+            {
+              comment: "named parameter keys"
+              begin: "([\\w$]+)\\s*(=)\\s*"
+              beginCaptures:
+                "1":
+                  name: "entity.key.parameter.attribute.cs"
+                "2":
+                  name: "keyword.operator.assignment.cs"
+              end: "(?:(,)|(?=[\\)]))"
+              endCaptures:
+                "1":
+                  name: "punctuation.definition.separator.parameter.cs"
+              patterns: [
+                {
+                  comment: "named parameter value strings"
+                  begin: "(?=@?\")"
+                  end: "(?=,|(?=[\\)]))"
+                  name: "entity.value.parameter.attribute.cs"
+                  patterns: [
+                    {
+                      include: "#string"
+                    }
+                    {
+                      match: "\\s*(\\+)\\s*"
+                      captures:
+                        "1":
+                          name: "keyword.operator.concatenation.cs"
+                    }
+                  ]
+                }
+                {
+                  comment: "named parameter value references"
+                  match: "[^\",\\s\\)]+"
+                  name: "entity.value.parameter.attribute.cs"
+                }
+              ]
+            }
+            {
+              match: ','
+              name: 'punctuation.definition.separator.parameter.cs'
+            }
+            {
+              comment: "positional parameter expressions"
+              begin: "[\\w]+\\s*\\(\\s*[\\w<>]+\\s*(?:,\\s*[\\w<>]+\\s*)?\\)"
+              beginCaptures:
+                "0":
+                  name: "entity.value.parameter.attribute.cs"
+              end: "(?=,|(?=[\\)]))"
+            }
+            {
+              comment: "positional parameter strings"
+              begin: "(?=@?\")"
+              name: "entity.value.parameter.attribute.cs"
+              patterns: [
+                {
+                  include: "#string"
+                }
+                {
+                  match: "\\s*(\\+)\\s*"
+                  captures:
+                    "1":
+                      name: "keyword.operator.concatenation.cs"
+                }
+              ]
+              end: "(?=,|(?=[\\)]))"
+            }
+            {
+              comment: "positional parameter values"
+              begin: "\"?([^\",\\s\\)]+)"
+              beginCaptures:
+                "1":
+                  name: "entity.value.parameter.attribute.cs"
+              end: "(?=,|(?=[\\)]))"
+            }
           ]
+        ]
       }
       {
         comment: "attribute without parameters"
