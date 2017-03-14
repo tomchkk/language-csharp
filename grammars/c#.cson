@@ -567,6 +567,31 @@ repository:
         ]
       }
     ]
+  "string-literal":
+    patterns: [
+      {
+        begin: "@\""
+        beginCaptures:
+          "0":
+            name: "punctuation.definition.string.begin.cs"
+        end: "(\")(?!\")"
+        endCaptures:
+          "1":
+            name: "punctuation.definition.string.end.cs"
+        name: "string.quoted.double.literal.cs"
+        patterns: [
+          {
+            match: "(\")\".*\"(\")"
+            captures:
+              "1":
+                name: "punctuation.definition.string.begin.cs"
+              "2":
+                name: "punctuation.definition.string.end.cs"
+            name: "string.quoted-string.double.literal.cs"
+          }
+        ]
+      }
+    ]
   string:
     patterns: [
       {
@@ -576,11 +601,7 @@ repository:
         include: "#string-interpolated"
       }
       {
-        captures:
-          "0":
-            name: "punctuation.definition.string.begin.cs"
-        match: "@\"([^\"]|\"\")*\""
-        name: "string.quoted.double.literal.cs"
+        include: "#string-literal"
       }
       {
         begin: "\""

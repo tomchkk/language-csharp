@@ -35,6 +35,36 @@ describe "Language C# package", ->
       expect(tokens[1][5]).toEqual value: '/*', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs', 'punctuation.definition.comment.cs']
       expect(tokens[1][6]).toEqual value: '(', scopes: ['source.cs', 'meta.class.cs', 'meta.class.body.cs', 'comment.block.cs']
 
+    it "tokenizes string literals correctly", ->
+      {tokens} = grammar.tokenizeLine "@\"This is a string literal\""
+
+      expect(tokens[0]).toEqual value: '@"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[1]).toEqual value: 'This is a string literal', scopes: ['source.cs', 'string.quoted.double.literal.cs']
+      expect(tokens[2]).toEqual value: '"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.end.cs']
+
+    it "tokenizes quoted-text in string literals correctly", ->
+      tokens = grammar.tokenizeLines """
+        @"I said ""Hello!"" to her"
+      """
+      expect(tokens[0][0]).toEqual value: '@"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[0][1]).toEqual value: 'I said ', scopes: ['source.cs', 'string.quoted.double.literal.cs']
+      expect(tokens[0][2]).toEqual value: '"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'string.quoted-string.double.literal.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[0][3]).toEqual value: '"Hello!"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'string.quoted-string.double.literal.cs']
+      expect(tokens[0][4]).toEqual value: '"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'string.quoted-string.double.literal.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[0][5]).toEqual value: ' to her', scopes: ['source.cs', 'string.quoted.double.literal.cs']
+      expect(tokens[0][6]).toEqual value: '"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.end.cs']
+
+    it "tokenizes multi-line verbatim string literals correctly", ->
+      tokens = grammar.tokenizeLines """
+        @"This is a multi-line
+        verbatim string literal."
+      """
+
+      expect(tokens[0][0]).toEqual value: '@"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[0][1]).toEqual value: 'This is a multi-line', scopes: ['source.cs', 'string.quoted.double.literal.cs']
+      expect(tokens[1][0]).toEqual value: 'verbatim string literal.', scopes: ['source.cs', 'string.quoted.double.literal.cs']
+      expect(tokens[1][1]).toEqual value: '"', scopes: ['source.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.end.cs']
+
     it "tokenizes plain enums", ->
       tokens = grammar.tokenizeLines """
         private enum TestEnum
@@ -438,6 +468,17 @@ describe "Language C# package", ->
       expect(tokens[26]).toEqual value: ',', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.definition.separator.parameter.cs']
       expect(tokens[28]).toEqual value: 'Attrib2', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
 
+    it "tokenizes annotations with a simple positional parameter string literal", ->
+      {tokens} = grammar.tokenizeLine "[Description(@\"This is a description.\")]"
+
+      expect(tokens[0]).toEqual value: '[', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.begin.cs']
+      expect(tokens[1]).toEqual value: 'Description', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'entity.name.attribute.cs']
+      expect(tokens[2]).toEqual value: '(', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'punctuation.definition.attribute.parameters.begin.cs']
+      expect(tokens[3]).toEqual value: '@"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.begin.cs']
+      expect(tokens[4]).toEqual value: 'This is a description.', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.literal.cs']
+      expect(tokens[5]).toEqual value: '"', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'meta.attribute.parameters.body.cs', 'entity.value.parameter.attribute.cs', 'string.quoted.double.literal.cs', 'punctuation.definition.string.end.cs']
+      expect(tokens[6]).toEqual value: ')', scopes: ['source.cs', 'meta.annotation.cs', 'meta.attribute.cs', 'punctuation.definition.attribute.parameters.end.cs']
+      expect(tokens[7]).toEqual value: ']', scopes: ['source.cs', 'meta.annotation.cs', 'punctuation.section.annotation.end.cs']
 
     it "tokenizes complex annotations", ->
       tokens = grammar.tokenizeLines """
